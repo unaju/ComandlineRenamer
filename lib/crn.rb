@@ -8,12 +8,12 @@ exit if ARGV.empty?
 
 # 引数の""を削除
 argv = ARGV.collect{ |v|
-  v.sub(/^\"(.*)\"$/, '\1')
+  v.toutf8.sub(/^\"(.*)\"$/, '\1')
 }
 
 # 置換処理用データ作成
 sub_ptn = (0...(argv.size / 2)).collect{ |i|
-  [ Regexp.new(ARGV[i]), ARGV[i+1] ]
+  [ Regexp.new(argv[i]), argv[i+1] ]
 }
 
 # ファイルリスト生成. マルチバイト対応のためにDir["*"]は使わない.
