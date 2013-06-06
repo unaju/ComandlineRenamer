@@ -17,19 +17,16 @@ sub_ptn = (0...(argv.size / 2)).collect{ |i|
 }
 
 # ファイルリスト生成. マルチバイト対応のためにDir["*"]は使わない.
-fl = Dir.open("./").
-  # マルチバイト対応のためutf8化
-  collect{ |f| f.toutf8 }.
-  # ".."と"."を排除
-  reject!{ |f| /^\.+$/ =~ f }.
-  # ファイル名を置換前、置換後で分ける
-  collect!{ |on|
-    nn = on.dup
-    sub_ptn.each{ |ptn,rep| nn.sub!(ptn,rep) }
-    [on, nn]
-  }.
-  # 置換されないものを削除
-  reject!{ |on, nn| on == nn }
+fl = []
+Dir.open("./").each{|f|
+  f = f.toutf8 # マルチバイト対応のためutf8化
+  next if /^\.+$/ =~ f # ".."と"."を排除
+  # 置換後ファイル名生成
+  nn = f.dup
+  sub_ptn.each{ |ptn,rep| nn.sub!(ptn,rep) }
+  # 置換されるならリストに追加
+  fl << [f, nn] if f != nn
+}
 
 # 置換なしなら終了
 exit if fl.empty?
